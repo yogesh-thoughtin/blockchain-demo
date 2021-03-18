@@ -1,0 +1,6 @@
+Miner
+
+The Miner is the one who picks up the transactions from a transaction pool and assembles them in a block. 
+The miner has to provide a valid proof-of-work to get the mining reward. 
+All the money that miner collects as a fee will be for him to keep. 
+He may spend that money on buying goods or services from other registered vendors on the network, just the way a Client described above does.

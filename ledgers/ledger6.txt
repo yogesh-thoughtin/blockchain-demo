@@ -1,0 +1,1 @@
+The AES-GCM construction is composed of the AES block cipher utilizing Galois Counter Mode 

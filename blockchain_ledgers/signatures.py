@@ -19,16 +19,13 @@ from cryptography.exceptions import InvalidSignature
 import sys
 
 
-def write_keys_to_files(private_key):
+def write_keys_to_files(private_key, return_bytes=False):
     '''
     A funtion to write keys in the files:
         private_key: RSAPrivateKey object
-        returns: None
+        return_bytes: flag for returning bytes instead of writing in files
+        returns: serialized public key, private key if return_bytes is True else None
     '''
-
-    # Create dir if doesn't exists
-    if not os.path.exists('keys'):
-        os.makedirs('keys')
 
     # Genterate private key bytes
     private_key_bytes = private_key.private_bytes(
@@ -39,24 +36,35 @@ def write_keys_to_files(private_key):
         #     b'password_for_encryption'
         # )
     )
-    # Write bytes to file
-    with open('keys/private.pem','wb') as key:
-        key.write(private_key_bytes)
 
     # Generate public key bytes
     public_key_bytes = private_key.public_key().public_bytes(
         encoding=serialization.Encoding.PEM,
         format=serialization.PublicFormat.PKCS1
     )
+
+    # Return serialized keys if return_bytes is True.
+    if return_bytes:
+        return public_key_bytes, private_key_bytes
+
+    # Create dir if doesn't exists
+    if not os.path.exists('keys'):
+        os.makedirs('keys')
+
+    # Write bytes to file
+    with open('keys/private.pem','wb') as key:
+        key.write(private_key_bytes)
+
     # Write bytes to file
     with open('keys/public.pem','wb') as key:
         key.write(public_key_bytes)
 
 
-def generate_keys(write_to_file=False):
+def generate_keys(write_to_file=False, return_bytes=False):
     '''
     A method to generate public and private keys using RSA algorithm
         write_to_file: Boolean to write keys on file or not.
+        return_bytes: flag for returning bytes instead of RSAPublicKey and RSAPrivateKey objects
         returns: returns public_key and private_key
     '''
     # generate  RSAPrivateKey object
@@ -68,19 +76,20 @@ def generate_keys(write_to_file=False):
     # Write key to files
     if write_to_file:
         write_keys_to_files(private_key)
-    
-    # get public_key for private key
-    public_key = private_key.public_key()
-    
-    return public_key, private_key
+    elif return_bytes:
+        # Return serialized keys
+        return write_keys_to_files(private_key, return_bytes=return_bytes)
+    else:
+        # get public_key for private key
+        public_key = private_key.public_key()
+        
+        return public_key, private_key
 
 
 def sign_message(private_key, message):
     '''
     A method to sign the message using private key.
-        private_key: RSAPrivateKey object to sign the message.
-        message: The data in bytes that needs to be signed.
-        returns: Signed message by give private key.
+        private_key: 
     '''
     # Create signed message
     signed_message = private_key.sign(
@@ -93,6 +102,7 @@ def sign_message(private_key, message):
     )
     return signed_message
 
+
 def verify(signed_message, message, public_key):
     '''
     A method to verify the signature of message.
@@ -101,7 +111,10 @@ def verify(signed_message, message, public_key):
         public_key: Public key of PKI 
         returns: boolean, True if signature is verified else False.
     '''
+
     try:
+        if isinstance(public_key, (bytes, bytearray)):
+            public_key = load_public_key_from_pem(public_key)
         # Verify signrature with actual message and return true
         public_key.verify(
             signature=signed_message,
@@ -116,6 +129,30 @@ def verify(signed_message, message, public_key):
     # Return false when invalid signature.
     except InvalidSignature:
         return False
+
+
+def load_private_key_from_pem(pem):
+    '''
+    Method to return RSAPrivateKey object from file object
+    pem: bytes of key
+    returns: RSAPrivateKey object from bytes
+    '''
+    return serialization.load_pem_private_key(
+        pem,
+        password=None
+    )    
+
+
+def load_public_key_from_pem(pem):
+    '''
+    Method to return RSAPublicKey object from file object
+    pem: bytes of key
+    returns: RSAPubliKey object from bytes
+    '''
+    return serialization.load_pem_public_key(
+        pem
+    )
+
 
 if __name__ == '__main__':
     message = b'random_message'

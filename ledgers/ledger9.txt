@@ -1,0 +1,1 @@
+Decrypts the data and authenticates the associated_data. If you called encrypt with associated_data you must pass the same associated_data in decrypt or the integrity check 

@@ -1,0 +1,5 @@
+
+
+New in version 2.0.
+
+The AES-CCM construction is composed of the AES block cipher utilizing Counter with CBC-MAC (CCM) (specified in RFC 3610).

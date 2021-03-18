@@ -1,0 +1,6 @@
+Client
+
+The Client is the one who will buy goods from other vendors. 
+The client himself may become a vendor and will accept money from others against the goods he supplies. 
+We assume here that the client can both be a supplier and a recipient of TPCoins. 
+Thus, we will create a client class in our code that has the ability to send and receive money.

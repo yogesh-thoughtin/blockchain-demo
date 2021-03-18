@@ -1,0 +1,3 @@
+
+
+Encrypts and authenticates the data provided as well as authenticating the associated_data. The output of this can be passed directly to the decrypt method.

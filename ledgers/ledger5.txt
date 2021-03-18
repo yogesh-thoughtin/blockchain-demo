@@ -1,0 +1,1 @@
+The ciphertext bytes with the 16 byte tag appended.
