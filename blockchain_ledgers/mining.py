@@ -1,3 +1,5 @@
+# This file demonstrates mining process before adding block to blockchain
+
 # THis file demonstrates how blockchain works and 
 
 # Signature imports
@@ -17,7 +19,7 @@ pu2, pr2 = generate_keys(return_bytes=True)
 
 # Deserialize the private key
 pr1 = load_private_key_from_pem(pr1)
-pr2 = load_private_key_from_pem(pr1)
+pr2 = load_private_key_from_pem(pr2)
 
 # Get last block
 last_block = get_last_block()
@@ -41,9 +43,21 @@ transaction1.sign(pr2)
 # Add transactions to block
 block.add_transaction(transaction)
 block.add_transaction(transaction1)
+
+# starting the mining
+print(f'Mining process started...')
 start = datetime.now()
 block.generate_proof_of_work()
 print(f'Time taken to calculate proof_of_work is {datetime.now() - start}')
+print('mining process complete')
+
+# Validating mining progess
+if block.have_valid_proof_of_work():
+    print('Mining have been done on this block successfully \
+        and it have valid proof of work...')
+else:
+    print('Mining have not been done to this block perfectly, \
+        No valid proof of work found.')
 
 # Save block to blockchain
 block.save()

@@ -9,6 +9,9 @@ from signatures import (generate_keys,
                         load_public_key_from_pem
                         )
 
+# configuration imports
+from config import MINING_REWARD_AMOUNT_LIMIT
+
 
 def transaction_sum(transactions):
     '''
@@ -41,26 +44,26 @@ class Transaction:
         # Add inputs to representation
         transaction_string = 'Inputs:\n'
         for sender, amount in self.inputs:
-            transaction_string += f'rececived {amount} from {sender} \n\n' 
-             
+            transaction_string += f'rececived {amount} from {sender} \n\n'
+
         # Add outputs to representation
         transaction_string += 'Outputs:\n'
         for receiver, amount in self.outputs:
-            transaction_string += f'sent {amount} to {receiver} \n\n' 
-            
+            transaction_string += f'sent {amount} to {receiver} \n\n'
+
         # Add signatures to representation
         transaction_string += 'Signatures:\n'
         for signature in self.signatures:
-            transaction_string += f'{signature}\n' 
-        
+            transaction_string += f'{signature}\n'
+
         # Add required signs to representation
         transaction_string += 'Required Signs:\n'
         for required in self.required_list:
-            transaction_string += f'{required}\n' 
+            transaction_string += f'{required}\n'
 
         # return all the representation
         return transaction_string
-        
+
     def add_input(self, from_address, amount):
         '''
         A method to record receiving transaction in ledger.
@@ -118,7 +121,8 @@ class Transaction:
             return False
 
         # Validate the input must be equal or grater than outputs
-        if transaction_sum(self.inputs) < transaction_sum(self.outputs):
+        if transaction_sum(self.inputs) - transaction_sum(self.outputs) - \
+                MINING_REWARD_AMOUNT_LIMIT > 0.00000001:
             print('Outputs are greater than input.')
             return False
 
